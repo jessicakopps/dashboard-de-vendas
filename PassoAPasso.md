@@ -68,7 +68,11 @@ git remote add origin <seu endereço>
 git push -u origin main
 ```
 ### Passo 2: "limpar" o projeto ReactJS
-- Limpar projeto ReactJS / tsconfig.json = "compilerOptions": {"baseUrl": "./src",
+- Limpar projeto ReactJS 
+- Acrescentar no tsconfig.json 
+```
+"compilerOptions": {"baseUrl": "./src",
+```
 - Criar arquivo _redirects na pasta public | Para funcionar no Netlify
 ```
 /* /index.html 200
@@ -76,6 +80,8 @@ git push -u origin main
 - **COMMIT: Project clean**
 ### Passo 3: adicionar Bootstrap e CSS ao projeto
 - Bootstrap
+
+Na pasta frontend:
 ```
 yarn add bootstrap
 ```
@@ -108,7 +114,7 @@ html, body {
     flex-shrink: 0;
     text-align: center;
 }
-
+/* Padrões do boostrap:*/
 .bg-primary {
     background-color: var(--color-primary) !important;
 }
