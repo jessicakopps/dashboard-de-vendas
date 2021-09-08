@@ -175,7 +175,7 @@ html, body {
 ```
 - **COMMIT: Basic static components**
 ### Passo 5: adicionar gráficos estáticos
-- Apex Charts
+- Apex Charts (https://apexcharts.com/react-chart-demos/)
 ```bash
 yarn add apexcharts
 yarn add react-apexcharts
