@@ -49,7 +49,6 @@ npx create-react-app frontend --template typescript
   - No canto inferior esquerdo, cliqque na flecha de local, botão direito no nome do projeto e (Re)start.
   - Tomcat initialized with port(s): 8080 (http)
 
-
 - **COMMIT: Project created**
 
 - *Lembrete: ver extensões e arquivos ocultos*
@@ -69,8 +68,8 @@ git remote add origin <seu endereço>
 git push -u origin main
 ```
 ### Passo 2: "limpar" o projeto ReactJS
-- Limpar projeto ReactJS / tsconfig.json
-- Arquivo _redirects
+- Limpar projeto ReactJS / tsconfig.json = "compilerOptions": {"baseUrl": "./src",
+- Criar arquivo _redirects na pasta public | Para funcionar no Netlify
 ```
 /* /index.html 200
 ```
