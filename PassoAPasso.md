@@ -317,7 +317,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 #### Modelo conceitual
 ![Image](https://github.com/devsuperior/bds-assets/raw/main/sds/sds3-mc.png "Modelo conceitual")
 
-#### Configirando o BD H2
+#### Configurando o BD H2 - Spring
  - Em src/maisn/resources
  - Em application.properties, colocar o código abaixo:
 
@@ -625,7 +625,6 @@ public Sale() {
 - **Acessar em: http://localhost:8080/h2-console**
   - URL: h2:mem:testdb
 
-
 - **COMMIT: Domain model, database seed**
 
 ### Passo 3: Estruturar o projeto 
@@ -635,16 +634,157 @@ public Sale() {
 ![Image](https://github.com/devsuperior/bds-assets/raw/main/sds/camadas.png "Padrão camadas")
 
 - Criar repositories
-- Criar DTO's
+  - Botão direito no com.devsuperior.dsvendas, New -> Interface
+  - Package: com.devsuperior.dsvendas.repositories
+  - Nome: SellerRepository
+```
+  public interface SellerRepository extends JpaRepository<Seller, Long> {
+}
+```
+  - Botão direito no com.devsuperior.dsvendas, New -> Class
+    - com.devsuperior.dsvendas.services e SellerService
+    - Acrescentar: 
+      - @ Service = Para registrar o sellerService como um componente do sistema.
+      - @Autowired = Se auto implementa
+```
+@Service
+public class SellerService {
+	
+	@Autowired
+	private SellerRepository  repository;
+
+	public List<SellerDTO> findAll() {
+		List<Seller> result = repository.findAll();
+		return result.stream().map(x -> new SellerDTO(x)).collect(Collectors.toList());
+	}
+```  
+- Criar DTO's = Objeto simples pra trafegar os dados, sem q esses objetos estejam atrelados ao BD.
+  - Botão direito no com.devsuperior.dsvendas, New -> Class
+  - com.devsuperior.dsvendas.dto e SellerDTO
+  - Serializable = Uma boa medida para garantir q os obj de SellerDTO sejam convertidos para bytes. Garantir qe o objeto possa trafegar em rede, salvo em arquivos...
+```
+  public class SellerDTO  implements Serializable {
+	
+	private Long id;
+	private String name;
+	
+	public SellerDTO( ) {
+}
+```
+  - Construtor - para poder copiar facilmente os dados de uma entity para um DTO
+```
+public SellerDTO(Seller entity) {
+		id = entity.getId();
+		name = entity.getName();
+	}
+```
+  - Criar source Field e getters and setters
+
 - Criar service
 - Criar controller
+
+  - New class com.devsuperior.dsvendas.controllers | SellerController
+  - @RestController = Indicar q a classe vai ser um controlador rest
+  - @RequestMapping = Indicar qual o caminho do recurso web
+
+```
+@RestController
+@RequestMapping(value = "/sellers")
+public class SellerController {
+	
+	@Autowired
+	private SellerService service;
+	
+	@GetMapping
+	public ResponseEntity<List<SellerDTO>> findAll() {
+		List<SellerDTO> list = service.findAll();
+
+	return ResponseEntity.ok(list);
+}
+}
+```
+  - Testar com o Postman
+
+
 - **COMMIT: Layers**
 
-### Passo 4: Busca paginada de vendas
+### Passo 4: Busca paginada de vendas - Spring
 
 - Pageable
-- page, size, sort
-- Evitando interações repetidas ao banco de dados
+  - CTR+C CTR+V em SellerRepository.java
+  - Nome: SaleRepository
+  - Trocar Saller por Sale no conteúdo
+
+- Crie o SaleDTO
+```
+public class SaleDTO {
+	
+	private Long id;
+	private Integer visited;
+	private Integer deals;
+	private Double amount;
+	private LocalDate date;	
+	
+	private SellerDTO seller;
+	
+	public SaleDTO () {		
+	}
+
+  public SaleDTO(Sale entity) {
+		id = entity.getId();
+		visited = entity.getVisited();
+		deals = entity.getDeals();
+		amount = entity.getAmount();
+		date = entity.getDate();
+		seller = new SellerDTO(entity.getSeller());
+	}
+```
+  - Criar source Field e getters and setters
+  
+
+  - CTR+C CTR+V SellerService
+    - Name: SaleService
+    - Trocar Saller por Sale no conteúdo
+```
+    public Page<SaleDTO> findAll(Pageable pageable) {
+		Page<Sale> result = repository.findAll(pageable);
+    return result.map(x -> new SaleDTO(x));
+	}
+```
+  - CRT_SHIF+O - domain.Pageable
+
+
+  - CTR+C CTR+V SellerController
+  - CRL+F - Case sensitive - Replace All - troca tds os Seller por Sale
+```
+@RestController
+@RequestMapping(value = "/sales")
+public class SaleController {
+	
+	@Autowired
+	private SaleService service;
+	
+	@GetMapping
+	public ResponseEntity<Page<SaleDTO>> findAll(Pageable pageable) {
+		Page<SaleDTO> list = service.findAll(pageable);
+
+	return ResponseEntity.ok(list);
+
+}
+}
+```
+
+- Evitando interações repetidas ao banco de dados - para quantidades pequenas < 1000
+  - Em SaleService:
+  - @Transactional - ao importar seleionar do spring
+```
+  @Autowired
+	private SellerRepository sellerRepository;
+	
+	@Transactional(readOnly = true)
+	public Page<SaleDTO> findAll(Pageable pageable) {
+		sellerRepository.findAll();
+```
 - **COMMIT: Pagination**
 
 ### Passo 5: Buscas agrupadas (GROUP BY)
@@ -715,14 +855,4 @@ git remote -v
 git subtree push --prefix backend heroku main
 ```
 
-- **PARABÉNS!**
 
-![Parabéns!](https://raw.githubusercontent.com/devsuperior/bds-assets/main/img/trophy.png)
-
-- Quero muito saber seu feedback
-  - O que você está achando da nossa abordagem?
-  - Você está conseguindo acompanhar?
-  - O que você está achando do evento?
-- Participe
-  - Comente na página da Semana Spring React
-  - Divulgue seu projeto no Linkedin e marque a DevSuperior
