@@ -661,7 +661,8 @@ public class SellerService {
 - Criar DTO's = Objeto simples pra trafegar os dados, sem q esses objetos estejam atrelados ao BD.
   - Botão direito no com.devsuperior.dsvendas, New -> Class
   - com.devsuperior.dsvendas.dto e SellerDTO
-  - Serializable = Uma boa medida para garantir q os obj de SellerDTO sejam convertidos para bytes. Garantir qe o objeto possa trafegar em rede, salvo em arquivos...
+  - Serializable = Uma boa medida para garantir q os obj de SellerDTO sejam convertidos para bytes. Garantir qe o objeto possa trafegar em rede, salvo em arquivos... Após importar
+  - Corrige com ID 1
 ```
   public class SellerDTO  implements Serializable {
 	
@@ -790,7 +791,78 @@ public class SaleController {
 ### Passo 5: Buscas agrupadas (GROUP BY)
 
 - Total de vendas por vendedor
+  - New Class - name: SaleSumDTO
+```
+public class SaleSumDTO implements Serializable {	
+	
+	private static final long serialVersionUID = 1L;
+	
+	private String sellerName;
+	private Double sum;
+	
+	public SaleSumDTO() {
+		
+	}
+
+	public SaleSumDTO(Seller seller, Double sum) {
+		this.sellerName = seller.getName();
+		this.sum = sum;
+	}
+```
+  - Em SaleRepository:
+```
+@Query("SELECT new com.devsuperior.dsvendas.dto.SaleSumDTO(obj.seller, SUM(obj.amount)) "
+			+ "FROM Sale As obj GROUP BY obj.seller")
+	List<SaleSumDTO> amountGroupBySeller();
+```
+- Em SaleService:
+```
+@Transactional(readOnly = true)
+	public List<SaleSumDTO> amountGroupBySeller() {
+	    return repository.amountGroupBySeller();
+	}
+```
+  - Em SaleController:
+```
+@GetMapping(value = "/sum-by-seller")
+	public ResponseEntity<List<SaleSumDTO>> amountGroupBySeller() {
+		List<SaleSumDTO> list = service.amountGroupBySeller();
+	return ResponseEntity.ok(list);
+	}
+  ```
+
 - Taxa de sucesso por vendedor
+   - Em SaleRepository:
+```
+@Query("SELECT new com.devsuperior.dsvendas.dto.SaleSuccessDTO;(obj.seller, SUM(obj.visited), SUM(obj.deals)) "
+			+ "FROM Sale As obj GROUP BY obj.seller")
+	List<SaleSuccessDTO> successGroupBySeller();
+```
+  - CRT+Xc CTR+V em SaleSumDTO - Nome: SaleSuccessDTO - Trocar Sum por Success
+  ```
+  public SaleSuccessDTO(Seller seller, Long visited, Long deals) {
+		this.sellerName = seller.getName();
+		this.visited = visited;
+		this.deals = deals;
+	}
+  ```
+  - Em SaleService:
+   ```
+  @Transactional(readOnly = true)
+	public List<SaleSuccessDTO> successGroupBySeller() {
+	    return repository.successGroupBySeller();
+	}
+   ```
+
+     - Em SaleController:
+```
+@GetMapping(value = "/sum-by-seller")
+	public ResponseEntity<List<SaleSumDTO>> amountGroupBySeller() {
+		List<SaleSumDTO> list = service.amountGroupBySeller();
+	return ResponseEntity.ok(list);
+	}
+  ```
+
 - **COMMIT: Group by search**
 
 ### Passo 6: Validação no Postgres local
