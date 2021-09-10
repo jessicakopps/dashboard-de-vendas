@@ -868,15 +868,7 @@ public class SaleSumDTO implements Serializable {
 ### Passo 6: Validação no Postgres local
 
 - Criar três perfis de projeto: test, dev, prod
-- Gerar script SQL no perfil dev
-- Testar projeto no banco Postgres local
-
-#### application.properties
-```
-spring.profiles.active=test
-
-spring.jpa.open-in-view=false
-```
+  - Criar o arq application-dev.properties em src/mais/resources
 
 #### application-dev.properties
 ```
@@ -893,7 +885,26 @@ spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation=true
 spring.jpa.hibernate.ddl-auto=none
 ```
 
-#### application-prod.properties
+- Gerar script SQL no perfil dev - tirar os comentários do código acima
+- Testar projeto no banco Postgres local
+#### application.properties alterar test para dev
+```
+spring.profiles.active=test
+
+spring.jpa.open-in-view=false
+```
+  - É pra ter criado um arq .sql na pasta backend
+  - Abri o arq acima e copiar
+
+- No pgAdmin (Postgree) crie DB local dsvendas
+  - Abra a DB criada- Scremas - Tables, botão direito - Query Tool
+  - Colar os códigos copiados do .sql, clicar em play, apagar os códigos
+  - Botão direito em Tables - Refresh, as tabelas estão criadas
+    - Verificar tabelas: botão direito - View all - rows
+
+- Testar Postman - Retornar os comentarios em application-dev.properties
+
+#### application-prod.properties - Irá rodar no Heroku
 ```
 spring.datasource.url=${DATABASE_URL}
 ```
@@ -904,8 +915,13 @@ spring.profiles.active=${APP_PROFILE:test}
 
 spring.jpa.open-in-view=false
 ```
+${APP_PROFILE:test} = Se a variável n estiver definida, use por padrão o perfil teste
+No Heroku a var será definida como prod(modo produção)
 
-#### system.properties
+#### system.properties - Heroku
+Criar na raiz do projeto - new - file
+Nome tem q estar exatamente igual, sem espaços. 
+
 ```
 java.runtime.version=11
 ```
