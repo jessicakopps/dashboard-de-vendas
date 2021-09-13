@@ -1094,7 +1094,9 @@ Argumentos que um componente React pode receber
 ## ERRATA NO EPISÓDIO 3 AOS 1:40:30 
 
 Favor trocar o nome da variável no Netlify de ~~BACKEND_URL~~ para **REACT_APP_BACKEND_URL**
-
+  - Setting - Build Deploy -> Environment variables
+  - URL sem a / no final
+  - Alterar também eu utils - requests
 Depois de trocar, vá em:
 
 Deploys -> Trigger deploy -> Deploy site
