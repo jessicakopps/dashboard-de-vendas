@@ -19,14 +19,14 @@ Projeto desenvolvido na Semana Spring React do DevSuperior com o professor Nelio
 - React 
 - Typescript 
 - Bootstrap
-deploy: Netlify
+- Deploy: Netlify
 
 ### Tecnologias usadas no backend:
 
 - Spring Boot com BD relacional
 - PostgreSQL
 - Postman
-deploy: Heroku
+- Deploy: Heroku
 
 
    
