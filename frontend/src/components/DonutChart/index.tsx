@@ -9,7 +9,7 @@ type ChartData = {
   series: number[];
 }
 
-function DonutChart() {
+const DonutChart = () => {
 
   const [chartData, setChartData] = useState<ChartData>({ labels: [], series: [] });
   //Sem o useEfect o axios é executado repetidamente - loop
@@ -23,7 +23,7 @@ function DonutChart() {
         setChartData({ labels: myLabels, series: mySeries });
         console.log(response.data);
       });
-  })
+  },[]);
 
 
   //FORMA ERRADA
