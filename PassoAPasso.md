@@ -1010,6 +1010,7 @@ yarn add @types/react-router-dom -D
 yarn add axios
 ```
 - Definir BASE_URL
+ - Arquivos que contenham apenas função, não componnte do React, fica apenas .ts
 - Definir tipo SaleSum
 - Definir tipo local ChartData em DonutChart
 - Fazer a requisição e tratar os dados
