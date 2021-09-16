@@ -1,4 +1,4 @@
-#  DashBoard de Vendas - DevSuperior
+#  DashBoard de Vendas
 
 Projeto desenvolvido na Semana Spring React do DevSuperior com o professor Nelio Alves.
 
