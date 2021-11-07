@@ -28,6 +28,12 @@ Projeto desenvolvido na Semana Spring React do DevSuperior com o professor Nelio
 - Postman
 - Deploy: Heroku
 
+## Usando a aplicação
+Para usá-la, basta executar os seguintes comandos na raíz do projeto:
+```
+npm install
+npm start
+```
 
    
 
